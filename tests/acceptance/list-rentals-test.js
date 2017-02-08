@@ -1,7 +1,19 @@
 import { test } from 'qunit';
 import moduleForAcceptance from 'super-rentals/tests/helpers/module-for-acceptance';
+import Ember from 'ember';
 
-moduleForAcceptance('Acceptance | list rentals');
+let StubMapsService = Ember.Service.extend({
+  getMapElement() {
+    return document.createElement('div');
+  }
+});
+
+moduleForAcceptance('Acceptance | list rentals', {
+  beforeEach() {
+    this.application.register('service:stubMaps', StubMapsService);
+    this.application.inject('component:location-map', 'maps', 'service:stubMaps');
+  }
+});
 
 test('should redirect to rentals route', function (assert) {
   visit('/');
@@ -39,7 +51,7 @@ test('should filter the list of rentals by city.', function (assert) {
   keyEvent('.list-filter input', 'keyup', 69);
   andThen(function() {
     assert.equal(find('.listing').length, 1, 'should show 1 listing');
-    assert.equal(find('.listing .location:containts("Seattle")').length, 1, 'should contain 1 listing with location Seattle');
+    assert.equal(find('.listing .location:contains("Seattle")').length, 1, 'should contain 1 listing with location Seattle');
   });
 });
 
